@@ -92,7 +92,6 @@ async function watchForLive() {
   const ss = await fetch("/api/sessions").then((x) => x.json()).catch(() => null);
   const id = ss?.live || ss?.running;
   if (!id || seenLive.has(id) || id === state.session) return;
-  seenLive.add(id);
   attach(id);
 }
 
@@ -289,6 +288,7 @@ function begin(id) {
 }
 
 function attach(id) {
+  seenLive.add(id); // shown once, so the watcher never pulls the viewer back off a replay
   begin(id);
   const es = new EventSource(`/api/stream/${id}`);
   state.es = es;
